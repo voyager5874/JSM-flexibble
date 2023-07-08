@@ -4,7 +4,7 @@ export type Project = {
   image: string;
   liveSiteUrl: string;
   githubUrl: string;
-  createdBy: string;
+  createdBy: User;
   category: string;
 };
 

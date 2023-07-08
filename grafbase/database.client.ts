@@ -3,7 +3,7 @@ import { GraphQLClient } from "graphql-request";
 const grafbaseApiUrl = process.env.GRAFBASE_API_URL || "";
 const grafbaseApiKey = process.env.GRAFBASE_API_KEY || "";
 
-const client = new GraphQLClient(grafbaseApiUrl, {
+export const client = new GraphQLClient(grafbaseApiUrl, {
   headers: {
     "x-api-key": grafbaseApiKey,
   },
@@ -16,7 +16,7 @@ export const makeGraphQLRequest = async <T = unknown>(
   try {
     return await client.request(query, variables);
   } catch (err) {
-    console.log("makeGraphQLRequest util error", err);
+    console.log("db client error", err);
     throw err;
   }
 };

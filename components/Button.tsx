@@ -1,7 +1,7 @@
 import { HTMLProps, MouseEvent } from "react";
 
 type Props = HTMLProps<HTMLButtonElement> & {
-  callback: Function;
+  callback?: Function;
 };
 export const Button = ({
   callback,
@@ -12,7 +12,7 @@ export const Button = ({
 }: Props) => {
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     onClick && onClick(e);
-    callback();
+    callback && callback();
   };
   return (
     <button onClick={handleClick} {...rest}>

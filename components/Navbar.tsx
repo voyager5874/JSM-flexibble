@@ -26,6 +26,7 @@ export const Navbar = async () => {
         {session?.user ? (
           <>
             <ProfileMenu user={session?.user} />
+            <Link href={"/post-project"}>Share</Link>
           </>
         ) : (
           <AuthProviders />

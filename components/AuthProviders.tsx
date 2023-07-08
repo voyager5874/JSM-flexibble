@@ -13,7 +13,6 @@ export const AuthProviders = () => {
   useEffect(() => {
     const fetchProviders = async () => {
       const res = await getProviders();
-      console.log("AuthProviders/useEffect", res);
       const providersArray = res ? Object.values(res) : [];
       setProviders(providersArray);
     };
