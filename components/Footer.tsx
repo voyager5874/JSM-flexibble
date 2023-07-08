@@ -3,12 +3,12 @@ import Link from "next/link";
 
 import { footerLinks } from "@/constant";
 
-type ColumnProps = {
+type FooterColumnProps = {
   title: string;
   links: string[];
 };
 
-const FooterColumn = ({ title, links }: ColumnProps) => (
+const FooterColumn = ({ title, links }: FooterColumnProps) => (
   <div className="footer_column">
     <h4 className="font-semibold">{title}</h4>
     <ul className="flex flex-col gap-2 font-normal">
@@ -24,7 +24,7 @@ const FooterColumn = ({ title, links }: ColumnProps) => (
 const Footer = () => (
   <section className="flexStart footer">
     <div className="flex flex-col gap-12 w-full">
-      <div className="flex items-start flex-col">
+      <div className="flex items-start flex-col ">
         <Image src="/logo.svg" width={116} height={38} alt="app logo" />
 
         <p className="text-start text-sm font-normal mt-5 max-w-xs">

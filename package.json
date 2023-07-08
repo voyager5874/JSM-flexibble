@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "grafbase": "npx grafbase@0.24 dev"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
+    "@heroicons/react": "^2.0.18",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "20.3.1",
     "@types/react": "18.2.14",
@@ -30,6 +32,7 @@
   },
   "devDependencies": {
     "@grafbase/sdk": "^0.1.0",
+    "encoding": "^0.1.13",
     "prettier": "^2.8.8"
   }
 }

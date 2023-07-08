@@ -1,4 +1,5 @@
 import { g, auth, config } from "@grafbase/sdk";
+import { Model } from "@grafbase/sdk/dist/src/model";
 
 // Welcome to Grafbase!
 // Define your data models, integrate auth, permission rules, custom resolvers, search, and more with Grafbase.
@@ -36,41 +37,57 @@ import { g, auth, config } from "@grafbase/sdk";
 //   author: g.relation(() => user).optional(),
 // });
 
-const User = g.model("User", {
-  name: g.string().length({ min: 2, max: 20 }),
-  email: g.email().unique(),
-  avatarUrl: g.url(),
-  description: g.string().optional(),
-  githubUrl: g.url().optional(),
-  projects: g
-    .relation(() => Project)
-    .list()
-    .optional(),
-  // comments: g.relation(comment).optional().list(),
+const User: Model = g
+  .model("User", {
+    name: g.string().length({ min: 2, max: 20 }),
+    email: g.email().unique(),
+    avatarUrl: g.url().optional(),
+    description: g.string().optional(),
+    githubUrl: g.url().optional(),
+    linkedInUrl: g.url().optional(),
+    projects: g
+      .relation(() => Project)
+      .list()
+      .optional(),
+    // comments: g.relation(comment).optional().list(),
 
-  // Extend models with resolvers
-  // https://grafbase.com/docs/edge-gateway/resolvers
-  // gravatar: g.url().resolver('user/gravatar')
-});
+    // Extend models with resolvers
+    // https://grafbase.com/docs/edge-gateway/resolvers
+    // gravatar: g.url().resolver('user/gravatar')
+  })
+  .auth((rules) => {
+    rules.public().read();
+  });
 
-const Project = g.model("Project", {
-  title: g.string().length({ min: 3 }),
-  description: g.string(),
-  image: g.url(),
-  liveSiteUrl: g.url(),
-  githubUrl: g.url(),
-  createdBy: g.relation(() => User),
-  category: g.string().search(),
+const Project: Model = g
+  .model("Project", {
+    title: g.string().length({ min: 3 }),
+    description: g.string(),
+    image: g.url(),
+    liveSiteUrl: g.url(),
+    githubUrl: g.url(),
+    createdBy: g.relation(() => User),
+    category: g.string().search(),
+  })
+  .auth((rules) => {
+    rules.public().read();
+    rules.private().create().delete().update();
+  });
+
+const jwt = auth.JWT({
+  issuer: "grafbase",
+  // secret: g.env("NEXTAUTH_SECRET"),
+  //Error: could not load grafbase/grafbase.config.ts
+  // Caused by: 'Environment variable NEXTAUTH_SECRET is not set'
+  secret: process.env.NEXTAUTH_SECRET!,
 });
 
 export default config({
   schema: g,
   // Integrate Auth
   // https://grafbase.com/docs/auth
-  // auth: {
-  //   providers: [authProvider],
-  //   rules: (rules) => {
-  //     rules.private()
-  //   }
-  // }
+  auth: {
+    providers: [jwt],
+    rules: (rules) => rules.private(),
+  },
 });
