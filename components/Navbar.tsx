@@ -4,7 +4,7 @@ import { NavLinks } from "@/constant";
 import { AuthProviders } from "@/components/AuthProviders";
 import { authOptions } from "@/next-auth/auth.options";
 import { getServerSession } from "next-auth";
-import { LogoutButton } from "@/components/LogoutButton";
+import { ProfileMenu } from "@/components/ProfileMenu";
 
 export const Navbar = async () => {
   const session = await getServerSession(authOptions);
@@ -25,20 +25,12 @@ export const Navbar = async () => {
       <div className="flexCenter gap-4">
         {session?.user ? (
           <>
-            <Image
-              src={session?.user?.image || "/user.svg"}
-              width={40}
-              height={40}
-              className="rounded-full"
-              alt={`${session.user.name}'s avatar`}
-            />
-            <Link href={"/post-project"}>Share Work</Link>
+            <ProfileMenu user={session?.user} />
           </>
         ) : (
           <AuthProviders />
         )}
       </div>
-      {session && <LogoutButton />}
     </nav>
   );
 };

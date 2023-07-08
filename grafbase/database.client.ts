@@ -16,6 +16,7 @@ export const makeGraphQLRequest = async <T = unknown>(
   try {
     return await client.request(query, variables);
   } catch (err) {
+    console.log("makeGraphQLRequest util error", err);
     throw err;
   }
 };

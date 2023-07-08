@@ -31,12 +31,12 @@ export const authOptions: AuthOptions = {
     session: async ({ session }) => {
       const email = session.user?.email!;
       try {
-        const databaseUserData = findUserInDB(email);
+        const databaseUserData = await findUserInDB(email);
         return {
           ...session,
           user: {
             ...session.user,
-            ...databaseUserData,
+            ...databaseUserData.user,
           },
         };
       } catch (err) {
