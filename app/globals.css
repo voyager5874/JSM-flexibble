@@ -149,15 +149,15 @@ body {
 }
 
 .form_image-container {
-  @apply w-full lg:min-h-[400px] min-h-[200px] relative;
+  @apply w-full lg:min-h-[210px] min-h-[200px] relative;
 }
 
 .form_image-label {
-  @apply z-10 text-center w-full h-full p-20 text-gray-100 border-2 border-gray-50 border-dashed;
+  @apply cursor-pointer w-full h-1/2 text-gray-100 border-2 border-gray-50 border-dashed;
 }
 
 .form_image-input {
-  @apply absolute z-30 w-full opacity-0 h-full cursor-pointer;
+  @apply hidden;
 }
 
 /* Profile Projects */

@@ -1,11 +1,14 @@
 import {
   createProjectMutation,
   createUserMutation,
+  getProjectsByCategoryQuery,
+  getProjectsBySearchTextQuery,
   userByEmailQuery,
 } from "@/grafbase/graphQL.requests";
 import { client, makeGraphQLRequest } from "@/grafbase/database.client";
 import { Project, User } from "@/grafbase/entities.types";
 import { uploadImage } from "@/services/cloudinary/cloudinary.actions";
+import { ProjectBySearchQueryResponse } from "@/grafbase/response.types";
 
 export const findUserInDB = (
   email: string
@@ -46,4 +49,30 @@ export const createNewProject = async (
     return makeGraphQLRequest(createProjectMutation, variables);
   }
   return { projectCreate: { project: undefined } };
+};
+
+export const fetchProjectsFilteredByCategory = async (
+  category?: string | null,
+  endcursor?: string | null,
+  first: number = 8
+): Promise<ProjectBySearchQueryResponse> => {
+  return makeGraphQLRequest(getProjectsByCategoryQuery, {
+    category,
+    endcursor,
+    first,
+  });
+};
+
+export const fetchProjectsFilteredBySearchText = async (
+  first: number = 8,
+  query: string,
+  fields?: keyof Project,
+  endcursor?: string | null
+): Promise<ProjectBySearchQueryResponse> => {
+  return makeGraphQLRequest(getProjectsBySearchTextQuery, {
+    first,
+    query,
+    fields,
+    endcursor,
+  });
 };

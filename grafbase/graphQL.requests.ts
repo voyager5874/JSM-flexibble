@@ -45,3 +45,69 @@ mutation createProject($input: ProjectCreateInput!){
     }
   }
 }`;
+
+export const getProjectsByCategoryQuery = `
+  query getProjects($category: String, $endcursor: String, $first: Int) {
+    projectSearch(first: $first, after: $endcursor, filter: {category: {eq: $category}}) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      searchInfo{
+      totalHits
+      }
+      edges {
+        node {
+          title
+          githubUrl
+          description
+          liveSiteUrl
+          id
+          image
+          category
+          createdBy {
+            id
+            email
+            name
+            avatarUrl
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const getProjectsBySearchTextQuery = `
+  query getProjects($first: Int, $query: String, $fields: [String!], $endcursor: String) {
+    projectSearch(first: $first, after: $endcursor, query: $query, fields: $fields) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      searchInfo{
+      totalHits
+      }
+      edges {
+        node {
+          title
+          githubUrl
+          description
+          liveSiteUrl
+          id
+          image
+          category
+          createdBy {
+            id
+            email
+            name
+            avatarUrl
+          }
+        }
+      }
+    }
+  }
+`;

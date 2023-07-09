@@ -1,7 +1,7 @@
 import { Project } from "@/grafbase/entities.types";
 
 export const createProjectViaApi = async (
-  data: Omit<Project, "createdBy">,
+  data: Omit<Project, "createdBy" | "id">,
   creatorId: string,
   token: string
 ) => {

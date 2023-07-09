@@ -1,5 +1,6 @@
 export type Project = {
   title: string;
+  id: string;
   description: string;
   image: string;
   liveSiteUrl: string;
