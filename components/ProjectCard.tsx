@@ -32,16 +32,15 @@ export const ProjectCard = ({
   }, []);
 
   return (
-    <div className="flexCenter flex-col rounded-2xl drop-shadow-card">
+    <div className="flexCenter flex-col rounded-2xl drop-shadow-card min-h-[350px]">
       <Link
         href={`/project/${id}`}
-        className="flexCenter group relative w-full h-full"
+        className="flexCenter group relative overflow-hidden  w-full h-full"
       >
         <Image
           src={image}
-          width={414}
-          height={314}
-          className="object-contain rounded-2xl"
+          fill
+          className="rounded-2xl object-cover"
           alt="project image"
         />
 

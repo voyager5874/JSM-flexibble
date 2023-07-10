@@ -1,12 +1,13 @@
 "use client";
 import { User } from "next-auth";
 import { Project } from "@/grafbase/entities.types";
-import { ChangeEvent, FormEvent, Fragment, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchToken } from "@/next-auth/utils";
 import Image from "next/image";
 import { createProjectViaApi } from "@/grafbase/actions.clientside.wrappers";
-import { Dialog, Transition } from "@headlessui/react";
+import { readImage } from "@/utils/readImage";
+import { AppDialog } from "@/components/AppDialog";
 
 type CommonProps = {
   user: Partial<User> | null | undefined;
@@ -23,8 +24,6 @@ export const ProjectForm = ({ type, user, project }: Props) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setSubmitting(true);
-
     const { token } = await fetchToken();
 
     const formData = new FormData(e.target as HTMLFormElement);
@@ -33,11 +32,24 @@ export const ProjectForm = ({ type, user, project }: Props) => {
     const liveSiteUrl = String(formData.get("liveSiteUrl"));
     const githubUrl = String(formData.get("githubUrl"));
     const category = String(formData.get("category"));
+    const poster = await readImage(formData.get("image"));
+    console.log({ image, poster });
+    const allDataProvided = Boolean(
+      title &&
+        description &&
+        liveSiteUrl &&
+        githubUrl &&
+        category &&
+        user &&
+        image
+    );
 
-    const allDataProvided =
-      title && description && liveSiteUrl && githubUrl && category && user;
+    if (!allDataProvided) {
+      setError("new project data not provided");
+      return;
+    }
+    setSubmitting(true);
 
-    if (!allDataProvided) throw new Error("new project data not provided");
     try {
       if (type === "post") {
         const res = await createProjectViaApi(
@@ -67,7 +79,7 @@ export const ProjectForm = ({ type, user, project }: Props) => {
     if (!file) return;
 
     if (!file.type.includes("image")) {
-      alert("Please upload an image!");
+      setError("Please upload an image!");
 
       return;
     }
@@ -85,59 +97,20 @@ export const ProjectForm = ({ type, user, project }: Props) => {
 
   return (
     <>
-      <Transition appear show={submitting} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={() => {}}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    Please wait
-                  </Dialog.Title>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      New Post is being created...
-                    </p>
-                  </div>
-
-                  <div className="mt-4"></div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
+      <AppDialog
+        open={Boolean(error) || submitting}
+        text={submitting ? "Processing" : error || ""}
+        title={submitting ? "please wait" : (error && "Error!") || ""}
+        onClose={() => setError(null)}
+      />
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-10 items-center lg:min-w-[500px] text-small border-2"
+        className="flex flex-col gap-10 items-center lg:min-w-[500px] text-small"
       >
         <div className="form_image-container h-[300px] flex flex-col justify-center">
           <label
             htmlFor="poster"
-            className="form_image-label h-1/2 z-10 flexCenter"
+            className="form_image-label h-full z-10 flexCenter"
           >
             <span>{!image && "Choose a poster for your project"}</span>
             <input
@@ -147,14 +120,14 @@ export const ProjectForm = ({ type, user, project }: Props) => {
               accept="image/*"
               required={type === "post"}
               className="hidden"
-              onChange={(e) => handleChangeImage(e)}
+              onChange={handleChangeImage}
             />
           </label>
 
           {image && (
             <Image
               src={image}
-              className="object-cover"
+              className="object-contain"
               alt="project poster z-9"
               fill
             />
@@ -176,15 +149,15 @@ export const ProjectForm = ({ type, user, project }: Props) => {
         <input
           name={"liveSiteUrl"}
           placeholder={"website url"}
-          type="text"
+          type="url"
           className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}
-        />{" "}
+        />
         <input
           name={"githubUrl"}
           placeholder={"github Url"}
-          type="text"
+          type="url"
           className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}
-        />{" "}
+        />
         <input
           name={"category"}
           placeholder={"project category"}
@@ -192,13 +165,14 @@ export const ProjectForm = ({ type, user, project }: Props) => {
           className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}
         />
         <button
-          disabled={submitting}
+          disabled={!image || submitting}
           type={"submit"}
           className="bg-blue-500 px-6 py-2 rounded-md"
+          style={{ opacity: `${!image || submitting ? 0.5 : 1}` }}
         >
           Submit
         </button>
-        {error && "Something went wrong!"}
+        {/*{error && `Something went wrong! ${error}`}*/}
       </form>
     </>
   );

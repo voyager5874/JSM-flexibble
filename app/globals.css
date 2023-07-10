@@ -153,7 +153,7 @@ body {
 }
 
 .form_image-label {
-  @apply cursor-pointer w-full h-1/2 text-gray-100 border-2 border-gray-50 border-dashed;
+  @apply cursor-pointer w-full text-gray-100 border-2 border-gray-50 border-dashed;
 }
 
 .form_image-input {

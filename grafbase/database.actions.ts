@@ -54,7 +54,7 @@ export const createNewProject = async (
 export const fetchProjectsFilteredByCategory = async (
   category?: string | null,
   endcursor?: string | null,
-  first: number = 8
+  first: number = 100
 ): Promise<ProjectBySearchQueryResponse> => {
   return makeGraphQLRequest(getProjectsByCategoryQuery, {
     category,

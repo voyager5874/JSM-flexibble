@@ -18,7 +18,7 @@ export const createProjectViaApi = async (
       }),
     });
   } catch (err) {
-    console.log("cloudinary/actions/upload/error", err);
+    console.log("cloudinary/actions/clientside-wrapper/upload/error", err);
     throw err;
   }
 };
