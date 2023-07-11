@@ -11,6 +11,7 @@ import { AppDialog } from "@/components/AppDialog";
 import { OptionsField } from "@/components/ProjectForm/OptionsField";
 import { categoryOptions } from "@/constant";
 import { MenuOption } from "@/types/app.types";
+import { Button } from "@/components/Button";
 
 type CommonProps = {
   user: Partial<User> | null | undefined;
@@ -176,14 +177,14 @@ export const ProjectForm = ({ type, user, project }: Props) => {
           selected={projectCategory}
           setSelected={setProjectCategory}
         />
-        <button
+        <Button
+          loading={submitting}
           disabled={!image || submitting}
           type={"submit"}
-          className="bg-blue-500 px-6 py-2 rounded-md"
-          style={{ opacity: `${!image || submitting ? 0.5 : 1}` }}
+          className="bg-blue-500 w-1/2 max-md:w-full py-2"
         >
           Submit
-        </button>
+        </Button>
         {/*{error && `Something went wrong! ${error}`}*/}
       </form>
     </>
