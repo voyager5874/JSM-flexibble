@@ -1,3 +1,5 @@
+import { MenuOption } from "@/types/app.types";
+
 export const NavLinks = [
   { href: "/", key: "Inspiration", text: "Inspiration" },
   { href: "/", key: "Find Projects", text: "Find Projects" },
@@ -20,6 +22,22 @@ export const categoryFilters = [
   "Blockchain",
   "E-commerce",
   "Chatbots",
+];
+
+export const categoryOptions: MenuOption[] = [
+  { title: "Frontend", id: "001" },
+  { title: "Backend", id: "002" },
+  { title: "Full-Stack", id: "003" },
+  { title: "Mobile", id: "004" },
+  { title: "UI/UX", id: "005" },
+  { title: "Game Dev", id: "006" },
+  { title: "E-commerce", id: "007" },
+  { title: "DevOps", id: "008" },
+  { title: "Blockchain", id: "009" },
+  { title: "Chatbots", id: "010" },
+  { title: "Data Science", id: "011" },
+  { title: "Cyber Security", id: "012" },
+  { title: "Machine Learning", id: "013" },
 ];
 
 export const footerLinks = [

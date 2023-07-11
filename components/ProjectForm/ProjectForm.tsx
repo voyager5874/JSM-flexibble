@@ -8,6 +8,9 @@ import Image from "next/image";
 import { createProjectViaApi } from "@/grafbase/actions.clientside.wrappers";
 import { readImage } from "@/utils/readImage";
 import { AppDialog } from "@/components/AppDialog";
+import { OptionsField } from "@/components/ProjectForm/OptionsField";
+import { categoryOptions } from "@/constant";
+import { MenuOption } from "@/types/app.types";
 
 type CommonProps = {
   user: Partial<User> | null | undefined;
@@ -20,6 +23,9 @@ export const ProjectForm = ({ type, user, project }: Props) => {
   const [error, setError] = useState<null | string>(null);
   const [image, setImage] = useState("");
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [projectCategory, setProjectCategory] = useState<MenuOption | null>(
+    null
+  );
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,7 +37,8 @@ export const ProjectForm = ({ type, user, project }: Props) => {
     const description = String(formData.get("description"));
     const liveSiteUrl = String(formData.get("liveSiteUrl"));
     const githubUrl = String(formData.get("githubUrl"));
-    const category = String(formData.get("category"));
+    // const category = String(formData.get("category"));
+    const category = projectCategory?.title || "";
     const poster = await readImage(formData.get("image"));
     console.log({ image, poster });
     const allDataProvided = Boolean(
@@ -158,11 +165,16 @@ export const ProjectForm = ({ type, user, project }: Props) => {
           type="url"
           className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}
         />
-        <input
-          name={"category"}
-          placeholder={"project category"}
-          type="text"
-          className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}
+        {/*<input*/}
+        {/*  name={"category"}*/}
+        {/*  placeholder={"project category"}*/}
+        {/*  type="text"*/}
+        {/*  className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}*/}
+        {/*/>*/}
+        <OptionsField
+          options={categoryOptions}
+          selected={projectCategory}
+          setSelected={setProjectCategory}
         />
         <button
           disabled={!image || submitting}
