@@ -18,7 +18,21 @@ export const createProjectViaApi = async (
       }),
     });
   } catch (err) {
-    console.log("cloudinary/actions/clientside-wrapper/upload/error", err);
+    console.log("db-actions/clientside-wrapper/post/error", err);
+    throw err;
+  }
+};
+
+export const deleteProjectViaApi = async (id: string, token: string) => {
+  try {
+    return await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/project/${id}?token=${token}`,
+      {
+        method: "DELETE",
+      }
+    );
+  } catch (err) {
+    console.log("db-actions/clientside-wrapper/delete/error", err);
     throw err;
   }
 };

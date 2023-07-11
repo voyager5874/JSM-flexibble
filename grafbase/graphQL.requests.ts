@@ -1,5 +1,5 @@
 export const userByEmailQuery = `
-query GetUserByEmail($email: Email!){
+query getUserByEmail($email: Email!){
   user(by: {email: $email}){
     id
     name
@@ -108,6 +108,34 @@ export const getProjectsBySearchTextQuery = `
           }
         }
       }
+    }
+  }
+`;
+
+export const getProjectByIdQuery = `
+  query getProjectById($id: ID!) {
+    project(by: { id: $id }) {
+      id
+      title
+      description
+      image
+      liveSiteUrl
+      githubUrl
+      category
+      createdBy {
+        id
+        name
+        email
+        avatarUrl
+      }
+    }
+  }
+`;
+
+export const deleteProjectMutation = `
+  mutation deleteProject($id: ID!) {
+    projectDelete(by: { id: $id }) {
+      deletedId
     }
   }
 `;

@@ -1,6 +1,8 @@
 import {
   createProjectMutation,
   createUserMutation,
+  deleteProjectMutation,
+  getProjectByIdQuery,
   getProjectsByCategoryQuery,
   getProjectsBySearchTextQuery,
   userByEmailQuery,
@@ -75,4 +77,18 @@ export const fetchProjectsFilteredBySearchText = async (
     fields,
     endcursor,
   });
+};
+
+export const getProjectDetails = (
+  id: string
+): Promise<{ project: Project | undefined } | undefined> => {
+  return makeGraphQLRequest(getProjectByIdQuery, { id });
+};
+
+export const deleteProject = (
+  id: string,
+  token: string
+): Promise<{ projectDelete: { deletedId: string } }> => {
+  client.setHeader("Authorization", `Bearer ${token}`);
+  return makeGraphQLRequest(deleteProjectMutation, { id });
 };
