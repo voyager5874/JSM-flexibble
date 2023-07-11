@@ -1,5 +1,6 @@
 import { fetchProjectsFilteredByCategory } from "@/grafbase/database.actions";
 import { ProjectCard } from "@/components/ProjectCard";
+import { Categories } from "@/components/Categories";
 
 type SearchParams = {
   category?: string | null;
@@ -18,15 +19,16 @@ export default async function Home({
   if (projects.length === 0) {
     return (
       <section className="flexStart flex-col paddings">
-        <p className="no-result-text text-center">
+        <Categories />
+        <p className="h-[600px] flex flexCenter text-2xl">
           No projects found, go create some first.
         </p>
       </section>
     );
   }
   return (
-    <div className="w-full items-center justify-between font-mono text-sm flex flex-col">
-      <h1>Categories</h1>
+    <div className="flexStart flex-col paddings mb-16">
+      <Categories />
       <section className="projects-grid">
         {projects.map(({ node }) => (
           <ProjectCard
