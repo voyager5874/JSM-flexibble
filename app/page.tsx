@@ -16,7 +16,7 @@ export default async function Home({
 }: Props) {
   const data = await fetchProjectsFilteredByCategory(category, endcursor);
   const projects = data?.projectSearch?.edges || [];
-  if (projects.length === 0) {
+  if (projects?.length === 0) {
     return (
       <section className="flexStart flex-col paddings">
         <Categories />

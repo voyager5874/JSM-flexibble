@@ -24,7 +24,7 @@ export const Categories = () => {
             type="button"
             onClick={() => handleTags(cat.title)}
             className={`${
-              category === cat.title
+              category && category === cat.title
                 ? "bg-light-white-300 font-medium"
                 : "font-normal"
             } px-4 py-3 rounded-lg capitalize whitespace-nowrap`}

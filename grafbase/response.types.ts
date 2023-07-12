@@ -9,9 +9,7 @@ type PageInfoType = {
 
 type CollectionType<T> = {
   pageInfo: PageInfoType;
-  edges: {
-    node: T[];
-  };
+  edges: Array<{ node: T }>;
 };
 
 type Error = {
@@ -29,15 +27,6 @@ export type ErrorResponse = {
   errors: Error[];
 };
 
-// export type ProjectBySearchQueryResponse = {
-//   projectSearch: {
-//     edges: { node: Project }[];
-//     pageInfo: PageInfoType;
-//     searchInfo: {
-//       totalHits: number;
-//     };
-//   } | null;
-// };
 export type ProjectBySearchQueryResponse = {
   projectSearch: CollectionType<Project> & {
     searchInfo: {

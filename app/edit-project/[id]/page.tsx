@@ -18,7 +18,7 @@ const EditProject = async ({ params: { id } }: Props) => {
   }
   return (
     <div className="w-full flex flex-col gap-10 items-center">
-      <h1 className="text-2xl font-bold">Post new project</h1>
+      <h1 className="text-2xl font-bold">Edit the project</h1>
       <ProjectForm
         type={"edit"}
         user={session?.user!}
