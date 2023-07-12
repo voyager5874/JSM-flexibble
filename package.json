@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@grafbase/sdk": "^0.1.0",
+    "@types/cookie": "^0.5.1",
     "encoding": "^0.1.13",
     "prettier": "^2.8.8"
   }
