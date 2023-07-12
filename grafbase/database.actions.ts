@@ -5,16 +5,22 @@ import {
   getProjectByIdQuery,
   getProjectsByCategoryQuery,
   getProjectsBySearchTextQuery,
+  getUserByIdWithProjectsQuery,
+  updateProjectMutation,
   userByEmailQuery,
 } from "@/grafbase/graphQL.requests";
 import { client, makeGraphQLRequest } from "@/grafbase/database.client";
 import { Project, User } from "@/grafbase/entities.types";
 import { uploadImage } from "@/services/cloudinary/cloudinary.actions";
-import { ProjectBySearchQueryResponse } from "@/grafbase/response.types";
+import {
+  ProjectBySearchQueryResponse,
+  ProjectDeleteMutationResponse,
+  UserQueryResponse,
+} from "@/grafbase/response.types";
 
 export const findUserInDB = (
   email: string
-): Promise<{ user: User | undefined }> => {
+): Promise<UserQueryResponse | null> => {
   return makeGraphQLRequest(userByEmailQuery, { email });
 };
 
@@ -34,7 +40,7 @@ export const createNewProject = async (
   data: Omit<Project, "createdBy">,
   creatorId: string,
   token: string
-): Promise<{ projectCreate: { project: Partial<Project> | undefined } }> => {
+): Promise<{ projectCreate: { project: Partial<Project> } } | null> => {
   const imageUrl = await uploadImage(data.image);
   if (imageUrl.url) {
     client.setHeader("Authorization", `Bearer ${token}`);
@@ -50,7 +56,7 @@ export const createNewProject = async (
     };
     return makeGraphQLRequest(createProjectMutation, variables);
   }
-  return { projectCreate: { project: undefined } };
+  return null;
 };
 
 export const fetchProjectsFilteredByCategory = async (
@@ -88,7 +94,44 @@ export const getProjectDetails = (
 export const deleteProject = (
   id: string,
   token: string
-): Promise<{ projectDelete: { deletedId: string } }> => {
+): Promise<ProjectDeleteMutationResponse> => {
   client.setHeader("Authorization", `Bearer ${token}`);
   return makeGraphQLRequest(deleteProjectMutation, { id });
+};
+
+export const getUserByIdWithProjects = (
+  id: string,
+  last?: number
+): Promise<UserQueryResponse | null> => {
+  return makeGraphQLRequest(getUserByIdWithProjectsQuery, { id, last });
+};
+
+export const editProject = async (
+  id: string,
+  update: Partial<Omit<Project, "createdBy" | "id">>,
+  token: string
+): Promise<{ projectUpdate: { project: Partial<Project> } } | null> => {
+  // const currentData = await getProjectDetails(id);
+  // if (!currentData?.project) throw new Error("Couldn't get project data");
+  let imageUrl = null;
+  if (update?.image) {
+    imageUrl = await uploadImage(update.image);
+  }
+  client.setHeader("Authorization", `Bearer ${token}`);
+
+  const variables = imageUrl?.url
+    ? {
+        id,
+        input: {
+          ...update,
+          image: imageUrl?.url,
+        },
+      }
+    : {
+        id,
+        input: {
+          ...update,
+        },
+      };
+  return makeGraphQLRequest(updateProjectMutation, variables);
 };

@@ -12,6 +12,29 @@ query getUserByEmail($email: Email!){
 }
 `;
 
+export const getUserByIdWithProjectsQuery = `
+  query getUserByIdWithProjects($id: ID!, $last: Int = 4) {
+    user(by: { id: $id }) {
+      id
+      name
+      email
+      description
+      avatarUrl
+      githubUrl
+      linkedinUrl
+      projects(last: $last) {
+        edges {
+          node {
+            id
+            title
+            image
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const createUserMutation = `
 mutation createUser($input: UserCreateInput!) {
   userCreate(input: $input) {
@@ -138,4 +161,20 @@ export const deleteProjectMutation = `
       deletedId
     }
   }
+`;
+
+export const updateProjectMutation = `
+	mutation updateProject($id: ID!, $input: ProjectUpdateInput!) {
+		projectUpdate(by: { id: $id }, input: $input) {
+			project {
+				id
+				title
+				description
+				createdBy {
+					email
+					name
+				}
+			}
+		}
+	}
 `;

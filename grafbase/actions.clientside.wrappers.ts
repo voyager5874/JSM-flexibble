@@ -36,3 +36,25 @@ export const deleteProjectViaApi = async (id: string, token: string) => {
     throw err;
   }
 };
+
+export const editProjectViaApi = async (
+  id: string,
+  data: Partial<Omit<Project, "createdBy" | "id">>,
+  token: string
+) => {
+  try {
+    return await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/project/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data,
+        token,
+      }),
+    });
+  } catch (err) {
+    console.log("db-actions/clientside-wrapper/put/error", err);
+    throw err;
+  }
+};

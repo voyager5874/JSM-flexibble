@@ -36,7 +36,7 @@ export const authOptions: AuthOptions = {
           ...session,
           user: {
             ...session.user,
-            ...databaseUserData.user,
+            ...databaseUserData?.user,
           },
         };
       } catch (err) {
@@ -48,14 +48,13 @@ export const authOptions: AuthOptions = {
     signIn: async ({ user }) => {
       try {
         const res = await findUserInDB(user?.email!);
-        if (res.user)
-          if (!res.user) {
-            await createUser({
-              name: user.name!,
-              email: user.email!,
-              avatarUrl: user.image,
-            });
-          }
+        if (!res?.user) {
+          await createUser({
+            name: user.name!,
+            email: user.email!,
+            avatarUrl: user.image,
+          });
+        }
         return true;
       } catch (err) {
         console.log("authOptions/signIn callback/error", err);

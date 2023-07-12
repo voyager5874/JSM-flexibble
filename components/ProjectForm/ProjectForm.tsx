@@ -5,13 +5,17 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchToken } from "@/next-auth/utils";
 import Image from "next/image";
-import { createProjectViaApi } from "@/grafbase/actions.clientside.wrappers";
+import {
+  createProjectViaApi,
+  editProjectViaApi,
+} from "@/grafbase/actions.clientside.wrappers";
 import { readImage } from "@/utils/readImage";
 import { AppDialog } from "@/components/AppDialog";
 import { OptionsField } from "@/components/ProjectForm/OptionsField";
 import { categoryOptions } from "@/constant";
 import { MenuOption } from "@/types/app.types";
 import { Button } from "@/components/Button";
+import { getActualEntityUpdates } from "@/utils/getActualEntityUpdates";
 
 type CommonProps = {
   user: Partial<User> | null | undefined;
@@ -22,10 +26,10 @@ type Props = PostFormProps | EditFormProps;
 export const ProjectForm = ({ type, user, project }: Props) => {
   const router = useRouter();
   const [error, setError] = useState<null | string>(null);
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(project?.image || "");
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [projectCategory, setProjectCategory] = useState<MenuOption | null>(
-    null
+    categoryOptions.find((o) => o.title === project?.category) || null
   );
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -52,14 +56,14 @@ export const ProjectForm = ({ type, user, project }: Props) => {
         image
     );
 
-    if (!allDataProvided) {
-      setError("new project data not provided");
-      return;
-    }
     setSubmitting(true);
 
     try {
       if (type === "post") {
+        if (!allDataProvided) {
+          setError("new project data not provided");
+          return;
+        }
         const res = await createProjectViaApi(
           { title, description, liveSiteUrl, githubUrl, category, image },
           user?.id || "nemo",
@@ -68,6 +72,24 @@ export const ProjectForm = ({ type, user, project }: Props) => {
 
         if (res.status === 201) {
           router.push("/?success=project successfully posted");
+        } else {
+          setError(`unexpected operation status code: ${res.status}`);
+        }
+      }
+      if (type === "edit") {
+        const data = {
+          title,
+          description,
+          liveSiteUrl,
+          githubUrl,
+          category,
+          image,
+        };
+        const update = getActualEntityUpdates(project, data);
+        const res = await editProjectViaApi(project?.id, update, token);
+
+        if (res.status === 200) {
+          router.push("/?success=project successfully edited");
         } else {
           setError(`unexpected operation status code: ${res.status}`);
         }
@@ -153,18 +175,21 @@ export const ProjectForm = ({ type, user, project }: Props) => {
           placeholder={"description"}
           type="text"
           className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}
+          defaultValue={project && project.description}
         />
         <input
           name={"liveSiteUrl"}
           placeholder={"website url"}
           type="url"
           className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}
+          defaultValue={project && project.liveSiteUrl}
         />
         <input
           name={"githubUrl"}
           placeholder={"github Url"}
           type="url"
           className={"w-full bg-light-white-100 outline-none rounded-xl p-4"}
+          defaultValue={project && project.githubUrl}
         />
         {/*<input*/}
         {/*  name={"category"}*/}
