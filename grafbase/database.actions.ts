@@ -17,6 +17,7 @@ import {
   ProjectDeleteMutationResponse,
   UserQueryResponse,
 } from "@/grafbase/response.types";
+import { UploadResponse } from "@/services/cloudinary/response.types";
 
 export const findUserInDB = (
   email: string
@@ -42,13 +43,13 @@ export const createNewProject = async (
   token: string
 ): Promise<{ projectCreate: { project: Partial<Project> } } | null> => {
   const imageUrl = await uploadImage(data.image);
-  if (imageUrl.url) {
+  if (imageUrl?.url) {
     client.setHeader("Authorization", `Bearer ${token}`);
 
     const variables = {
       input: {
         ...data,
-        image: imageUrl.url,
+        image: imageUrl?.url,
         createdBy: {
           link: creatorId,
         },
@@ -113,25 +114,26 @@ export const editProject = async (
 ): Promise<{ projectUpdate: { project: Partial<Project> } } | null> => {
   // const currentData = await getProjectDetails(id);
   // if (!currentData?.project) throw new Error("Couldn't get project data");
-  let imageUrl = null;
+  let imageUrl = null as null | UploadResponse;
   if (update?.image) {
     imageUrl = await uploadImage(update.image);
   }
   client.setHeader("Authorization", `Bearer ${token}`);
 
-  const variables = imageUrl?.url
-    ? {
-        id,
-        input: {
-          ...update,
-          image: imageUrl?.url,
-        },
-      }
-    : {
-        id,
-        input: {
-          ...update,
-        },
-      };
+  const variables =
+    imageUrl && imageUrl?.url
+      ? {
+          id,
+          input: {
+            ...update,
+            image: imageUrl?.url,
+          },
+        }
+      : {
+          id,
+          input: {
+            ...update,
+          },
+        };
   return makeGraphQLRequest(updateProjectMutation, variables);
 };
