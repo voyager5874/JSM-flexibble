@@ -11,11 +11,15 @@ type Props = {
   searchParams: SearchParams;
 };
 
+export const dynamic = "force-dynamic";
+export const dynamicParams: boolean = true;
+export const revalidate = 0;
+
 export default async function Home({
   searchParams: { endcursor, category },
 }: Props) {
   const data = await fetchProjectsFilteredByCategory(category, endcursor);
-  const projects = data?.projectSearch?.edges || [];
+  const projects = data?.projects || [];
   if (projects?.length === 0) {
     return (
       <section className="flexStart flex-col paddings">

@@ -2,6 +2,7 @@ import {
   createProjectMutation,
   createUserMutation,
   deleteProjectMutation,
+  getAllProjectsQuery,
   getProjectByIdQuery,
   getProjectsByCategoryQuery,
   getProjectsBySearchTextQuery,
@@ -13,7 +14,9 @@ import { client, makeGraphQLRequest } from "@/grafbase/database.client";
 import { Project, User } from "@/grafbase/entities.types";
 import { uploadImage } from "@/services/cloudinary/cloudinary.actions";
 import {
+  PageInfoType,
   ProjectBySearchQueryResponse,
+  ProjectCollectionQueryResponse,
   ProjectDeleteMutationResponse,
   UserQueryResponse,
 } from "@/grafbase/response.types";
@@ -60,16 +63,41 @@ export const createNewProject = async (
   return null;
 };
 
+function isSearch(obj: any): obj is ProjectBySearchQueryResponse {
+  return obj && typeof obj === "object" && "projectSearch" in obj;
+}
+
+function isCollection(obj: any): obj is ProjectCollectionQueryResponse {
+  return obj && typeof obj === "object" && "projectCollection" in obj;
+}
+
 export const fetchProjectsFilteredByCategory = async (
   category?: string | null,
   endcursor?: string | null,
   first: number = 100
-): Promise<ProjectBySearchQueryResponse> => {
-  return makeGraphQLRequest(getProjectsByCategoryQuery, {
-    category,
-    endcursor,
-    first,
-  });
+): Promise<{
+  pageInfo: PageInfoType;
+  projects: { node: Project }[];
+} | null> => {
+  const vars = { category, endcursor, first };
+  console.log("fetchProjectsFilteredByCategory/variables", vars);
+  //grafbase client throws error in production when category is null,
+  //graphQL playgrounds accept category === null just fine
+  const res = category
+    ? await makeGraphQLRequest(getProjectsByCategoryQuery, vars)
+    : await makeGraphQLRequest(getAllProjectsQuery, { first });
+  console.log("fetchProjectsFilteredByCategory/result", res);
+  if (isSearch(res))
+    return {
+      pageInfo: res.projectSearch.pageInfo,
+      projects: res.projectSearch.edges,
+    };
+  if (isCollection(res))
+    return {
+      pageInfo: res.projectCollection.pageInfo,
+      projects: res.projectCollection.edges,
+    };
+  return null;
 };
 
 export const fetchProjectsFilteredBySearchText = async (

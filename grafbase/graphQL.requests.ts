@@ -69,6 +69,37 @@ mutation createProject($input: ProjectCreateInput!){
   }
 }`;
 
+export const getAllProjectsQuery = `
+query allProjects($first: Int = 100) {
+  projectCollection(first: $first) {
+    pageInfo {
+      startCursor
+      endCursor
+      hasPreviousPage
+      hasNextPage
+    }
+    edges {
+      node {
+        title
+        githubUrl
+        description
+        liveSiteUrl
+        id
+        image
+        category
+        createdBy {
+          id
+          email
+          name
+          avatarUrl
+        }
+      }
+      cursor
+    }
+  }
+}
+`;
+
 export const getProjectsByCategoryQuery = `
   query getProjects($category: String, $endcursor: String, $first: Int) {
     projectSearch(first: $first, after: $endcursor, filter: {category: {eq: $category}}) {

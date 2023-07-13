@@ -1,13 +1,13 @@
 import { Project, User } from "@/grafbase/entities.types";
 
-type PageInfoType = {
+export type PageInfoType = {
   hasPreviousPage: boolean;
   hasNextPage: boolean;
-  startCursor: string;
-  endCursor: string;
+  startCursor: string | null;
+  endCursor: string | null;
 };
 
-type CollectionType<T> = {
+export type CollectionType<T> = {
   pageInfo: PageInfoType;
   edges: Array<{ node: T }>;
 };
